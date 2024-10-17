@@ -1,6 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
+import matplotlib.pyplot as plt  # Ensure this line is included
 
 def monte_carlo_simulation(data, num_simulations=100, num_days=252, save_path=None):
     """
@@ -8,7 +7,13 @@ def monte_carlo_simulation(data, num_simulations=100, num_days=252, save_path=No
     basata su media e volatilità storica. Plotta e salva i risultati se specificato.
     """
     simulation_results = {}
+    
+    # Create subplots; if only one cryptocurrency, 'axes' will be a single object
     fig, axes = plt.subplots(len(data), 1, figsize=(10, len(data) * 5))
+    
+    # Ensure 'axes' is always iterable
+    if len(data) == 1:
+        axes = [axes]  # Make it a list for consistency
     
     for ax, (name, df) in zip(axes, data.items()):
         # Calcola i parametri storici

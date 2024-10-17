@@ -27,3 +27,4 @@ def analyze_correlation_in_period(data, start_date, end_date):
     print(f"Matrice di correlazione per il periodo {start_date} - {end_date}:")
     print(correlation_df)
     return correlation_df
+

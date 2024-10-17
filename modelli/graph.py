@@ -75,3 +75,21 @@ def plot_correlation_matrix(correlation_df, title="Matrice di Correlazione", sav
 
 
 
+def plot_sharpe_ratios(sharpe_ratios, save_path=None):
+    # Plotting Sharpe Ratios
+    names = list(sharpe_ratios.keys())
+    values = list(sharpe_ratios.values())
+    
+    plt.figure(figsize=(10, 6))
+    plt.barh(names, values, color='skyblue')
+    plt.xlabel('Sharpe Ratio')
+    plt.title('Sharpe Ratios of Cryptocurrencies')
+    plt.axvline(0, color='red', linestyle='--')  # Line at 0 for reference
+    
+    if save_path:
+        plt.savefig(save_path, bbox_inches="tight")  # Save the figure
+    plt.show()
+
+# Call the plotting function after calculating Sharpe Ratios
+
+

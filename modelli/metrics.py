@@ -73,3 +73,18 @@ def calculate_correlation(dfs):
                 correlation_matrix[name1][name2] = correlation
     
     return pd.DataFrame(correlation_matrix)
+
+def calculate_sharpe_ratio(daily_returns, risk_free_rate=0):
+    """
+    Calcola il Sharpe Ratio per una serie di ritorni giornalieri.
+    
+    Parameters:
+    daily_returns (pd.Series): Ritorni giornalieri della criptovaluta.
+    risk_free_rate (float): Tasso di interesse privo di rischio (default è 0).
+    
+    Returns:
+    float: Sharpe Ratio.
+    """
+    excess_returns = daily_returns - risk_free_rate
+    sharpe_ratio = excess_returns.mean() / excess_returns.std()
+    return sharpe_ratio
