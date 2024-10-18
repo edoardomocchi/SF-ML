@@ -76,9 +76,16 @@ def plot_sharpe_ratios(sharpe_ratios, save_path=None):
     plt.figure(figsize=(10, 6))
     plt.barh(names, values, color='skyblue')
     plt.xlabel('Sharpe Ratio')
-    plt.title('Sharpe Ratios of Cryptocurrencies')
-    plt.axvline(0, color='red', linestyle='--')  # Line at 0 for reference
+    plt.title('Sharpe Ratios delle Criptovalute')
+    plt.axvline(0, color='red', linestyle='--')  # Linea a 0 per riferimento
+
+    if save_path:
+        plt.savefig(save_path)
     
+    plt.show()
+
+    
+
   
 # Call the plotting function after calculating Sharpe Ratios
 
