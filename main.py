@@ -1,9 +1,14 @@
-# Import necessary libraries
+# Import necessary libraries and functions
 from modelli.format import load_all_data
 from modelli.metrics import calculate_daily_returns, calculate_volatility, calculate_correlation, calculate_sharpe_ratio
-from modelli.graph import plot_individual_price_trends_row, plot_correlation_matrix, plot_sharpe_ratios
 from modelli.analyze import filter_data_by_date
-from modelli.montecarlo import monte_carlo_simulation
+from modelli.montecarlo import monte_carlo_simulation_prediction, monte_carlo_simulation_plot
+from modelli.graph import (
+    plot_individual_price_trends, 
+    plot_correlation_matrix, 
+    plot_sharpe_ratios
+)
+
 import matplotlib.pyplot as plt
 
 def main():
@@ -31,17 +36,20 @@ def main():
     correlation_df = calculate_correlation(data)
     print("Matrice di correlazione generale:")
     print(correlation_df)
+
+    # Plot correlation matrix and individual price trends using functions from graph.py
     plot_correlation_matrix(correlation_df, title="Matrice di Correlazione Generale", save_path="correlation_matrix_general.png")
-    
-    # Plot individual price trends
-    plot_individual_price_trends_row(data, save_path="individual_price_trends_general.png")
+    plot_individual_price_trends(data, save_path="individual_price_trends_general.png")
     
     # 2. Correlation matrix and graphs for the crash period
     start_date = '2021-11-01'
     end_date = '2022-06-30'
     filtered_data = filter_data_by_date(data, start_date, end_date)
-    plot_individual_price_trends_row(filtered_data, save_path="individual_price_trends_crash.png")
+
+    # Plot individual price trends for the crash period
+    plot_individual_price_trends(filtered_data, save_path="individual_price_trends_crash.png")
     
+    # Calculate and plot the correlation matrix for the crash period
     period_correlation_df = calculate_correlation(filtered_data)
     print(f"Matrice di correlazione per il periodo {start_date} - {end_date}:")
     print(period_correlation_df)
@@ -60,7 +68,8 @@ def main():
 
     # 3. Monte Carlo simulation for Bitcoin
     btc_data = {'bitcoin': data['bitcoin']}
-    monte_carlo_simulation(btc_data, num_simulations=100, num_days=252, save_path="monte_carlo_btc.png")
+    simulation_results = monte_carlo_simulation_prediction(btc_data, num_simulations=100)
+    monte_carlo_simulation_plot(simulation_results, btc_data, save_path="monte_carlo_btc.png")
 
     # Plot Sharpe Ratios and save the graph
     plot_sharpe_ratios(sharpe_ratios, save_path="sharpe_ratios.png")  # Save the overall Sharpe Ratio graph

@@ -34,45 +34,21 @@ def calculate_volatility(df):
     return volatility
 
 def calculate_correlation(dfs):
-    """
-    Calcola la matrice di correlazione tra le criptovalute in modo esplicito.
-    
-    Formula della correlazione tra due serie temporali X e Y:
-        corr(X, Y) = cov(X, Y) / (σ_X * σ_Y)
-    
-    dove:
-        - cov(X, Y) è la covarianza tra X e Y
-        - σ_X e σ_Y sono le deviazioni standard di X e Y
-    """
-    # Calcola i ritorni giornalieri per tutte le criptovalute e trova la lunghezza minima
-    returns_data = {name: df['Daily_Return'].tolist() for name, df in dfs.items()}
-    min_length = min(len(returns) for returns in returns_data.values())
-    returns_data = {name: returns[:min_length] for name, returns in returns_data.items()}
-    
-    # Calcola le medie e le deviazioni standard per ogni criptovaluta
-    means = {name: sum(returns) / len(returns) for name, returns in returns_data.items()}
-    std_devs = {name: (sum((r - means[name]) ** 2 for r in returns) / (len(returns) - 1)) ** 0.5
-                for name, returns in returns_data.items()}
-    
-    # Calcola la matrice di correlazione
-    correlation_matrix = {}
-    crypto_names = list(returns_data.keys())
-    
-    for i, name1 in enumerate(crypto_names):
-        correlation_matrix[name1] = {}
-        for j, name2 in enumerate(crypto_names):
-            if i == j:
-                correlation_matrix[name1][name2] = 1.0
-            else:
-                # Calcola la covarianza
-                covariance = sum((returns_data[name1][k] - means[name1]) * (returns_data[name2][k] - means[name2])
-                                 for k in range(min_length)) / (min_length - 1)
-                
-                # Calcola la correlazione
-                correlation = covariance / (std_devs[name1] * std_devs[name2])
-                correlation_matrix[name1][name2] = correlation
-    
-    return pd.DataFrame(correlation_matrix)
+    # Extract 'Daily_Return' columns and align them
+    returns_df = pd.concat(
+        [df['Daily_Return'] for df in dfs.values()], axis=1, join='inner'
+    )
+    returns_df.columns = dfs.keys()
+
+    # Truncate to the minimum length (if necessary)
+    min_length = returns_df.shape[0]
+    returns_df = returns_df.iloc[:min_length]
+
+    # Compute the correlation matrix using pandas built-in method
+    correlation_matrix = returns_df.corr()
+
+    return correlation_matrix
+
 
 def calculate_sharpe_ratio(daily_returns, risk_free_rate=0):
     """

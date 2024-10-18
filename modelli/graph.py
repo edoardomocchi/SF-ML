@@ -1,62 +1,58 @@
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import pandas as pd
+import matplotlib
 import seaborn as sns
 
-def plot_individual_price_trends_row(data, save_path=None):
+def plot_individual_price_trends(data, save_path=None):
     """
-    Plotta le tendenze dei prezzi di chiusura per ciascuna criptovaluta individualmente,
-    posizionando tutti i grafici in una singola riga senza etichette delle date sull'asse x.
-    Salva il grafico se viene specificato un percorso di salvataggio.
+    Plots the closing price trends for each cryptocurrency individually,
+    taking the dates directly from the dataset. Adds legends, axis labels, and improves aesthetics.
+    Saves the plot if a save path is specified.
     """
+
     num_cryptos = len(data)
-    fig, axes = plt.subplots(1, num_cryptos, figsize=(20, 5), sharey=False)
-    
-    for ax, (name, df) in zip(axes, data.items()):
+    cols = 2  # Number of columns in the grid
+    rows = (num_cryptos + cols - 1) // cols  # Calculate rows needed
+
+    fig, axes = plt.subplots(rows, cols, figsize=(14, 4 * rows))
+    axes = axes.flatten()
+
+    colors = plt.cm.tab10.colors  # Use a colormap for different colors
+
+    for idx, (name, df) in enumerate(data.items()):
+        ax = axes[idx]
+
+        # Ensure 'Date' column is in datetime format
+        if not pd.api.types.is_datetime64_any_dtype(df['Date']):
+            df['Date'] = pd.to_datetime(df['Date'])
+
         df = df.sort_values('Date')
-        min_val = df['Close'].min() * 0.95
-        max_val = df['Close'].max() * 1.05
-        ax.set_ylim([min_val, max_val])
-        
-        ax.plot(df['Date'], df['Close'], label=name, color='blue')
-        ax.set_title(f'{name}')
-        
-        ax.set_xticklabels([])
-        ax.set_xticks([])
-        
-        ax.set_yticklabels([])
-        ax.set_yticks([])
-    
-    fig.supylabel('')
-    
+
+        ax.plot(df['Date'], df['Close'], label=name, color=colors[idx % len(colors)])
+        ax.set_title(f'{name} Closing Prices')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Price (USD)')
+        ax.legend()
+
+        # Improve date formatting on x-axis
+        ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+        ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
+        ax.tick_params(axis='x', rotation=45)
+
+    # Remove any empty subplots if the number of cryptocurrencies is odd
+    for ax in axes[num_cryptos:]:
+        fig.delaxes(ax)
+
     plt.tight_layout()
-    
+
     if save_path:
         plt.savefig(save_path, bbox_inches="tight")
-    
+
     plt.show()
 
 
-def plot_price_trends(data, save_path=None):
-    """
-    Plotta la tendenza dei prezzi di chiusura per tutte le criptovalute su un singolo grafico.
-    Salva il grafico se viene specificato un percorso di salvataggio.
-    """
-    plt.figure(figsize=(10, 6))
-    
-    for name, df in data.items():
-        df = df.sort_values('Date')
-        plt.plot(df['Date'], df['Close'], label=name)
-    
-    plt.title('Tendenze dei Prezzi di Chiusura')
-    plt.xlabel('Data')
-    plt.ylabel('Prezzo di Chiusura')
-    plt.legend(loc="upper left")
-    plt.tight_layout()
-    
-    if save_path:
-        plt.savefig(save_path, bbox_inches="tight")
-    
-    plt.show()
+
 
 
 def plot_correlation_matrix(correlation_df, title="Matrice di Correlazione", save_path=None):
@@ -68,10 +64,7 @@ def plot_correlation_matrix(correlation_df, title="Matrice di Correlazione", sav
     sns.heatmap(correlation_df, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
     plt.title(title)
     
-    if save_path:
-        plt.savefig(save_path, bbox_inches="tight")
-    
-    plt.show()
+   
 
 
 
@@ -86,10 +79,7 @@ def plot_sharpe_ratios(sharpe_ratios, save_path=None):
     plt.title('Sharpe Ratios of Cryptocurrencies')
     plt.axvline(0, color='red', linestyle='--')  # Line at 0 for reference
     
-    if save_path:
-        plt.savefig(save_path, bbox_inches="tight")  # Save the figure
-    plt.show()
-
+  
 # Call the plotting function after calculating Sharpe Ratios
 
 

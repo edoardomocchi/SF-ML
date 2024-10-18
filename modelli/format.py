@@ -5,7 +5,6 @@ def load_all_data():
         'bitcoin': './data.csv/databtc.csv',
         'ethereum': './data.csv/dataeth.csv',
         'litecoin': './data.csv/dataltc.csv',
-        'ripple': './data.csv/dataxrp.csv',
         'cardano': './data.csv/dataada.csv'
     }
 
