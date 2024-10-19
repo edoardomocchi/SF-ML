@@ -2,7 +2,7 @@
 from modelli.format import load_all_data
 from modelli.metrics import calculate_daily_returns, calculate_volatility, calculate_correlation, calculate_sharpe_ratio
 from modelli.analyze import filter_data_by_date
-from modelli.montecarlo import monte_carlo_simulation_prediction, monte_carlo_simulation_plot
+from prediction.montecarlo import monte_carlo_simulation_prediction, monte_carlo_simulation_plot
 from modelli.graph import (
     plot_individual_price_trends, 
     plot_correlation_matrix, 
